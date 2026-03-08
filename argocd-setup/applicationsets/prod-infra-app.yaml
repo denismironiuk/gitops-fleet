@@ -6,12 +6,12 @@ metadata:
 spec:
   project: infrastructure
   source:
-    repoURL: 'https://github.com/denismironiuk/gitops-fleet.git' # Не забудь свой URL
+    repoURL: 'https://github.com/denismironiuk/gitops-fleet.git' # ВАЖНО: твоя ссылка
     targetRevision: main
     path: infrastructure/overlays/prod-cluster
   destination:
     server: https://kubernetes.default.svc
-    namespace: default # <-- Добавили обязательное поле
+    namespace: default
   syncPolicy:
     automated:
       prune: true
@@ -19,3 +19,15 @@ spec:
     syncOptions:
       - CreateNamespace=true
       - ServerSideApply=true
+  # Указываем ArgoCD игнорировать системные инжекты Azure AKS
+  ignoreDifferences:
+    - group: admissionregistration.k8s.io
+      kind: ValidatingWebhookConfiguration
+      name: cert-manager-webhook
+      jqPathExpressions:
+        - '.webhooks[].namespaceSelector.matchExpressions'
+    - group: admissionregistration.k8s.io
+      kind: MutatingWebhookConfiguration
+      name: cert-manager-webhook
+      jqPathExpressions:
+        - '.webhooks[].namespaceSelector.matchExpressions'
