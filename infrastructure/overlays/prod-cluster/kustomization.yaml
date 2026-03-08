@@ -1,0 +1,27 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - external-gateway.yaml
+
+helmCharts:
+  - name: cert-manager
+    repo: https://charts.jetstack.io
+    version: v1.14.4
+    releaseName: cert-manager
+    namespace: cert-manager
+    valuesFile: cert-manager-values.yaml
+    
+  - name: nginx-gateway-fabric
+    repo: oci://ghcr.io/nginxinc/charts
+    version: 2.4.1
+    releaseName: ngf
+    namespace: nginx-gateway
+    includeCRDs: true
+    
+  - name: kube-prometheus-stack
+    repo: https://prometheus-community.github.io/helm-charts
+    version: 82.1.1
+    releaseName: monitor
+    namespace: monitoring
+    valuesFile: monitor-values.yaml

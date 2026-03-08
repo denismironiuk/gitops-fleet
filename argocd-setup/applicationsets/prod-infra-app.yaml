@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: prod-infrastructure
+  namespace: argocd
+spec:
+  project: infrastructure
+  source:
+    repoURL: 'https://github.com/ТВОЙ_ПРОФИЛЬ/gitops-fleet.git' # ВАЖНО: укажи ссылку на свой Git-репо
+    targetRevision: HEAD
+    path: infrastructure/overlays/prod-cluster
+  destination:
+    server: https://kubernetes.default.svc
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true # Обязательно для больших CRD (Prometheus, Gateway API)

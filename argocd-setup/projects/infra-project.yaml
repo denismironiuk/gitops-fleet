@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: infrastructure
+  namespace: argocd
+spec:
+  description: Core Cluster Infrastructure
+  sourceRepos:
+    - '*' # Замени на URL своего репозитория в будущем, например 'https://github.com/den4ik/gitops-fleet.git'
+  destinations:
+    - namespace: cert-manager
+      server: https://kubernetes.default.svc
+    - namespace: nginx-gateway
+      server: https://kubernetes.default.svc
+    - namespace: monitoring
+      server: https://kubernetes.default.svc
+  # Разрешаем создавать кластерные ресурсы (CRD, ClusterRole и т.д.)
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
