@@ -6,15 +6,16 @@ metadata:
 spec:
   project: infrastructure
   source:
-    repoURL: 'https://github.com/ТВОЙ_ПРОФИЛЬ/gitops-fleet.git' # ВАЖНО: укажи ссылку на свой Git-репо
+    repoURL: 'https://github.com/denismironiuk/gitops-fleet.git' # Не забудь свой URL
     targetRevision: HEAD
     path: infrastructure/overlays/prod-cluster
   destination:
     server: https://kubernetes.default.svc
+    namespace: default # <-- Добавили обязательное поле
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
-      - ServerSideApply=true # Обязательно для больших CRD (Prometheus, Gateway API)
+      - ServerSideApply=true

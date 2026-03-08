@@ -6,15 +6,11 @@ metadata:
 spec:
   description: Core Cluster Infrastructure
   sourceRepos:
-    - '*' # Замени на URL своего репозитория в будущем, например 'https://github.com/den4ik/gitops-fleet.git'
+    - '*'
   destinations:
-    - namespace: cert-manager
+    # Разрешаем инфраструктурному проекту работать со всеми неймспейсами
+    - namespace: '*'
       server: https://kubernetes.default.svc
-    - namespace: nginx-gateway
-      server: https://kubernetes.default.svc
-    - namespace: monitoring
-      server: https://kubernetes.default.svc
-  # Разрешаем создавать кластерные ресурсы (CRD, ClusterRole и т.д.)
   clusterResourceWhitelist:
     - group: '*'
       kind: '*'
