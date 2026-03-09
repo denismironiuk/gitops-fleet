@@ -2,15 +2,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: backend
+  namespace: store-backend
   labels:
     app: backend
 spec:
   replicas: 1
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxUnavailable: 25%
-      maxSurge: 25%
   selector:
     matchLabels:
       app: backend
@@ -20,51 +16,45 @@ spec:
         app: backend
     spec:
       containers:
-        - name: backend
-          image: akarv/online-store-backend:v23
-          ports:
-            - name: http-backend
-              containerPort: 8081
-              protocol: TCP
-          # Лимиты и реквесты (CPU/RAM)
-          resources:
-            requests:
-              cpu: 100m
-              memory: 256Mi
-            limits:
-              cpu: 500m
-              memory: 512Mi
-          # Переменные окружения
-          env:
-            - name: PORT
-              value: "8081"
-            - name: REDIS_URL
-              value: "redis://redis-store:6379"
-            - name: MONGO_USER
-              value: "den4ik"
-            - name: MONGO_DATABASE
-              value: "webeccomerse"
-            # Подтягиваем пароль из существующего секрета
-            - name: MONGO_PASSWD
-              valueFrom:
-                secretKeyRef:
-                  name: backend-secrets
-                  key: MONGO_PASSWD
-          # Проверки живости (Liveness)
-          livenessProbe:
-            tcpSocket:
-              port: http-backend
-            initialDelaySeconds: 15
-            timeoutSeconds: 1
-            periodSeconds: 20
-            successThreshold: 1
-            failureThreshold: 3
-          # Проверки готовности (Readiness)
-          readinessProbe:
-            tcpSocket:
-              port: http-backend
-            initialDelaySeconds: 5
-            timeoutSeconds: 1
-            periodSeconds: 10
-            successThreshold: 1
-            failureThreshold: 3
+      - name: backend
+        image: akarv/online-store-backend:latest 
+        ports:
+        - name: http-backend
+          containerPort: 8081
+        
+        # --- ЛИМИТЫ РЕСУРСОВ ---
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        
+        # --- ПЕРЕМЕННЫЕ ОКРУЖЕНИЯ ---
+        env:
+        - name: PORT
+          value: "8081"
+        - name: REDIS_URL
+          value: "redis://redis-store:6379"
+        - name: MONGO_USER
+          value: "den4ik"
+        - name: MONGO_DATABASE
+          value: "webeccomerse"
+        - name: MONGO_PASSWD
+          valueFrom:
+            secretKeyRef:
+              name: backend-secrets
+              key: MONGO_PASSWD
+              
+        # --- ПРОВЕРКИ ЖИЗНИ (Health Checks) ---
+        readinessProbe:
+          tcpSocket:
+            port: http-backend
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: http-backend
+          initialDelaySeconds: 15
+          periodSeconds: 20
