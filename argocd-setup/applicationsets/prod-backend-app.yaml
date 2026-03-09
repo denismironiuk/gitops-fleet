@@ -4,7 +4,7 @@ metadata:
   name: prod-backend-api
   namespace: argocd
 spec:
-  project: applications # Используем проект, который создавали ранее
+  project: infrastructure # Используем проект, который создавали ранее
   source:
     repoURL: 'https://github.com/denismironiuk/gitops-fleet.git' # НЕ ЗАБУДЬ СВОЙ URL
     targetRevision: main
