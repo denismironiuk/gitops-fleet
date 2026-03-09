@@ -1,9 +1,25 @@
 grafana:
   persistence:
     enabled: true
+  # ДОБАВЬ ЭТО:
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+
 prometheus:
   prometheusSpec:
     retention: 15d
+    # Рекомендую также добавить лимиты для Prometheus, 
+    # иначе он может съесть всю память на твоем LOQ-15
+    resources:
+      requests:
+        memory: 400Mi
+      limits:
+        memory: 1Gi
     storageSpec:
       volumeClaimTemplate:
         spec:
