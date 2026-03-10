@@ -8,8 +8,25 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/nginx/nginx-gateway-fabric.git
-    path: deploy/helm-chart
+    repoURL: oci://ghcr.io/nginx/charts
+    chart: nginx-gateway-fabric
+    
+    helm:
+      releaseName: ngf
+      values: |
+        # Control Plane Configuration
+        controlPlane:
+          replicas: 2
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+        # Log Level
+        logging:
+          level: info
   destination:
     server: https://kubernetes.default.svc
     namespace: nginx-gateway
