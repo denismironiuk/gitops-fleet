@@ -3,6 +3,7 @@ kind: Application
 metadata:
   name: prod-frontend-api
   namespace: argocd
+  annotations: {argocd.argoproj.io/sync-wave: "10"}
 spec:
   project: infrastructure
   source:

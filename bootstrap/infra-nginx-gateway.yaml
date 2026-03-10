@@ -1,0 +1,14 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: infra-nginx
+  namespace: argocd
+  annotations: {argocd.argoproj.io/sync-wave: "-15"}
+spec:
+  project: default
+  source:
+    chart: nginx-gateway-fabric
+    repoURL: oci://ghcr.io/nginx/charts
+    targetRevision: 2.4.1
+  destination: {server: 'https://kubernetes.default.svc', namespace: nginx-gateway}
+  syncPolicy: {automated: {prune: true, selfHeal: true}, syncOptions: [CreateNamespace=true]}
