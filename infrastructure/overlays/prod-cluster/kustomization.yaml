@@ -25,9 +25,10 @@ helmCharts:
     releaseName: monitor
     namespace: monitoring
     valuesFile: monitor-values.yaml
-    
+
   - name: keda
     repo: https://kedacore.github.io/charts
     version: 2.13.0
     releaseName: keda
     namespace: keda
+    includeCRDs: true
