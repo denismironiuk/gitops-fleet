@@ -4,7 +4,7 @@ metadata:
   name: infra-cert-manager
   namespace: argocd
   annotations:
-    argocd.argoproj.io/sync-wave: "-20" # Самый ранний старт
+    argocd.argoproj.io/sync-wave: "-20"
 spec:
   project: default
   source:
@@ -17,6 +17,21 @@ spec:
   destination:
     server: https://kubernetes.default.svc
     namespace: cert-manager
+  
+  # ЭТОТ БЛОК УБИРАЕТ ЖЕЛТЫЙ ЦВЕТ (OutOfSync)
+  ignoreDifferences:
+    - group: admissionregistration.k8s.io
+      kind: ValidatingWebhookConfiguration
+      # Имя должно совпадать с тем, что на скрине (обычно cert-manager-webhook)
+      name: cert-manager-webhook 
+      jsonPointers:
+        - /webhooks/0/namespaceSelector/matchExpressions
+        - /webhooks/1/namespaceSelector/matchExpressions
+
   syncPolicy:
-    automated: {prune: true, selfHeal: true}
-    syncOptions: [CreateNamespace=true]
+    automated: 
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true # Маст-хэв для больших CRD, как у KEDA
