@@ -9,7 +9,6 @@ spec:
   project: default
   source:
     repoURL: https://github.com/nginx/nginx-gateway-fabric.git
-    targetRevision: v1.5.0
     path: deploy/helm-chart
   destination:
     server: https://kubernetes.default.svc
