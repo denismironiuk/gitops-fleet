@@ -5,7 +5,7 @@ metadata:
   namespace: store-backend
 spec:
   scaleTargetRef:
-    name: backend# Имя твоего деплоймента бэкенда
+    name: backend
   minReplicaCount: 1
   maxReplicaCount: 5
   triggers:
