@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: infra-network-config
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "-12" # Чуть позже KEDA, но раньше приложений
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/denismironiuk/gitops-fleet.git'
+    targetRevision: main
+    path: infrastructure/overlays/prod-cluster # Указываем путь к твоему файлу
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: nginx-gateway # Твой неймспейс для сети
+  syncPolicy:
+    automated: {prune: true, selfHeal: true}
