@@ -1,21 +1,32 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: infra-nginx
+  name: infra-nginx-gateway
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "-20"
 spec:
   project: default
   source:
-    # Для OCI репозиториев в ArgoCD URL пишется так:
-    repoURL: ghcr.io/nginx/charts
+    repoURL: oci://ghcr.io/nginx/charts
     chart: nginx-gateway-fabric
-    # СТАВИМ СТАБИЛЬНУЮ ВЕРСИЮ NGF (на текущий момент это 1.5.0 или 1.6.0)
-    targetRevision: 1.5.0 
+    targetRevision: 1.5.0
     helm:
-      # Имя релиза, как в твоей команде (ngf)
       releaseName: ngf
+      values: |
+        # Control Plane Configuration
+        controlPlane:
+          replicas: 2
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+        # Log Level
+        logging:
+          level: info
   destination:
     server: https://kubernetes.default.svc
     namespace: nginx-gateway
@@ -25,3 +36,4 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+      - ServerSideApply=true
