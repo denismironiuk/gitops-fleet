@@ -3,32 +3,14 @@ kind: Application
 metadata:
   name: infra-network-config
   namespace: argocd
-  annotations:
-    argocd.argoproj.io/sync-wave: "-12" # Идет сразу после контроллеров
+  annotations: {argocd.argoproj.io/sync-wave: "-12"}
 spec:
   project: default
   source:
     repoURL: 'https://github.com/denismironiuk/gitops-fleet.git'
     targetRevision: main
     path: infrastructure/overlays/prod-cluster
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: nginx-gateway
+  destination: {server: 'https://kubernetes.default.svc', namespace: nginx-gateway}
   syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
-      - ServerSideApply=true
-  ignoreDifferences:
-    - group: admissionregistration.k8s.io
-      kind: ValidatingWebhookConfiguration
-      name: cert-manager-webhook
-      jqPathExpressions:
-        - '.webhooks[].namespaceSelector.matchExpressions'
-    - group: admissionregistration.k8s.io
-      kind: MutatingWebhookConfiguration
-      name: cert-manager-webhook
-      jqPathExpressions:
-        - '.webhooks[].namespaceSelector.matchExpressions'
+    automated: {prune: true, selfHeal: true}
+    syncOptions: [CreateNamespace=true]
