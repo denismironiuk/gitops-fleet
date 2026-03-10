@@ -1,31 +1,23 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: infra-nginx-gateway
+  name: infra-nginx
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "-20"
 spec:
   project: default
   source:
-    repoURL: https://nginx.github.io/helm-charts
-    chart: nginx-gateway-fabric
-    targetRevision: 0.5.0
+    repoURL: 'https://github.com/nginxinc/nginx-gateway-fabric.git'
+    targetRevision: v2.4.2 # Та самая версия, которую ты нашел
+    path: charts/nginx-gateway-fabric
     helm:
       releaseName: ngf
       values: |
-        # Control Plane Configuration
-        replicaCount: 2
-        podAnnotations: {}
-        resources:
-          requests:
-            cpu: 100m
-            memory: 128Mi
-          limits:
-            cpu: 500m
-            memory: 256Mi
+        service:
+          type: LoadBalancer
   destination:
-    server: https://kubernetes.default.svc
+    server: 'https://kubernetes.default.svc'
     namespace: nginx-gateway
   syncPolicy:
     automated:
@@ -33,4 +25,3 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
-      - ServerSideApply=true
