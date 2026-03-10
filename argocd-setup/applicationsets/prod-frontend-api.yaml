@@ -4,14 +4,22 @@ metadata:
   name: prod-frontend-api
   namespace: argocd
 spec:
-  project: infrastructure # Используем проект, который создавали ранее
+  project: infrastructure
   source:
-    repoURL: 'https://github.com/denismironiuk/gitops-fleet.git' # НЕ ЗАБУДЬ СВОЙ URL
+    repoURL: 'https://github.com/denismironiuk/gitops-fleet.git'
     targetRevision: main
     path: apps/overlays/prod/frontend-api
   destination:
     server: https://kubernetes.default.svc
     namespace: store-frontend
+  # --- ДОБАВЬ ЭТОТ БЛОК ---
+  ignoreDifferences:
+    - group: apps
+      kind: Deployment
+      name: frontend  # Убедись, что имя совпадает с именем твоего Deployment
+      jsonPointers:
+        - /spec/replicas
+  # ------------------------
   syncPolicy:
     automated:
       prune: true

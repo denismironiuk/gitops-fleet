@@ -1,0 +1,18 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: backend-scaler
+  namespace: store-backend
+spec:
+  scaleTargetRef:
+    name: backend# Имя твоего деплоймента бэкенда
+  minReplicaCount: 1
+  maxReplicaCount: 5
+  triggers:
+    - type: redis
+      metadata:
+        # Используем внутреннее DNS имя сервиса, который мы создали выше
+        host: redis-store.store-backend.svc.cluster.local
+        port: "6379"
+        listName: "jobs" # Список, за которым следит KEDA
+        listLength: "10" # Скейлимся, если в очереди > 10 задач
