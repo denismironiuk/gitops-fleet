@@ -9,12 +9,15 @@ spec:
   project: default
   source:
     repoURL: 'https://github.com/nginxinc/nginx-gateway-fabric.git'
-    targetRevision: v2.4.2 # Та самая версия, которую ты нашел
+    targetRevision: v2.4.2
     path: charts/nginx-gateway-fabric
     helm:
       releaseName: ngf
+      # ВАЖНО: Следи за отступами внутри values
       values: |
-        service:
+        serviceAccount:
+          annotations:
+            azure.workload.identity/client-id: "f4fc578b-e718-46b7-9022-2240d12a2c91"
           type: LoadBalancer
   destination:
     server: 'https://kubernetes.default.svc'

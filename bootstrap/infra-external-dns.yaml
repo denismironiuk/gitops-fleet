@@ -1,0 +1,33 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: infra-external-dns
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "-15" # Ставим после контроллера
+spec:
+  project: default
+  source:
+    chart: external-dns
+    repoURL: https://kubernetes-sigs.github.io/external-dns/
+    targetRevision: 1.15.0
+    helm:
+      values: |
+        provider: azure # Или cloudflare, смотря где твой домен
+        serviceAccount:
+          annotations:
+            # Тот же фокус с Web Identity — без этого он не пустит к домену
+            azure.workload.identity/client-id: "f4fc578b-e718-46b7-9022-2240d12a2c91"
+        # ГЛАВНОЕ: разрешаем ему смотреть на Gateway API
+        extraArgs:
+          - --source=gateway-httproute
+          - --source=gateway-grpcroute
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: external-dns
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
