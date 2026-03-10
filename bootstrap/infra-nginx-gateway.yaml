@@ -8,25 +8,9 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://helm.nginx.com/stable
-    chart: nginx-gateway-fabric
-    targetRevision: 1.5.0
-    helm:
-      releaseName: ngf
-      values: |
-        # Control Plane Configuration
-        controlPlane:
-          replicas: 2
-          resources:
-            requests:
-              cpu: 100m
-              memory: 128Mi
-            limits:
-              cpu: 500m
-              memory: 256Mi
-        # Log Level
-        logging:
-          level: info
+    repoURL: https://github.com/nginx/nginx-gateway-fabric.git
+    targetRevision: v1.5.0
+    path: deploy/helm-chart
   destination:
     server: https://kubernetes.default.svc
     namespace: nginx-gateway
