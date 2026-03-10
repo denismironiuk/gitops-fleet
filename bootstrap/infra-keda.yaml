@@ -3,12 +3,22 @@ kind: Application
 metadata:
   name: infra-keda
   namespace: argocd
-  annotations: {argocd.argoproj.io/sync-wave: "-10"}
+  annotations:
+    argocd.argoproj.io/sync-wave: "-10"
 spec:
   project: default
   source:
     chart: keda
     repoURL: https://kedacore.github.io/charts
     targetRevision: 2.13.0
-  destination: {server: 'https://kubernetes.default.svc', namespace: keda}
-  syncPolicy: {automated: {prune: true, selfHeal: true}, syncOptions: [CreateNamespace=true]}
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: keda
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true  # <--- КЛЮЧЕВОЙ ФИКС: убирает ошибку "Too long"
+      - Replace=true          # <--- Доп. страховка: если CRD зависнет, Argo его пересоздаст
