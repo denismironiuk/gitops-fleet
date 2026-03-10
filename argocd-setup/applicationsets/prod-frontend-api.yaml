@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: prod-backend-api
+  namespace: argocd
+spec:
+  project: infrastructure # Используем проект, который создавали ранее
+  source:
+    repoURL: 'https://github.com/denismironiuk/gitops-fleet.git' # НЕ ЗАБУДЬ СВОЙ URL
+    targetRevision: main
+    path: apps/overlays/prod/frontend-api
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: store-backend
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
