@@ -17,12 +17,9 @@ spec:
         sources:
           - gateway-httproute
         
+        # Оставляем это для правильной генерации ServiceAccount
         azure:
-          # Этого поля в Helm-чарте достаточно для включения логики Workload Identity
           useWorkloadIdentityExtension: true
-          resourceGroup: rg-migration-prod
-          subscriptionId: fcf3f628-5f65-43c3-8a08-8b202b22def0
-          tenantId: 69982d6a-e385-4e42-bdcd-4159c0dcb907
 
         rbac:
           create: true
@@ -42,7 +39,13 @@ spec:
         extraArgs:
           - --txt-owner-id=aks-prod-cluster
           - --domain-filter=jenkinsdevops.org
-          
+          # ПЕРЕНОСИМ ВСЁ В ФЛАГИ
+          - --azure-subscription-id=fcf3f628-5f65-43c3-8a08-8b202b22def0
+          - --azure-resource-group=rg-migration-prod
+          - --azure-tenant-id=69982d6a-e385-4e42-bdcd-4159c0dcb907
+          - --azure-user-assigned-identity-client-id=dbafb21d-f2e1-495c-bc64-9991cb12ebd1
+          # ГЛАВНЫЙ ФИКС: говорим, что файла НЕТ
+          - --azure-config-file=
   destination:
     server: https://kubernetes.default.svc
     namespace: external-dns
