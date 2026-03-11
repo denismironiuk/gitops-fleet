@@ -8,4 +8,5 @@ resources:
   - infra-nginx-gateway.yaml
   - infra-cluster-issuer.yaml
   - infra-network-config.yaml
+  - infra-external-dns.yaml
   # Все остальные файлы в папке будут игнорироваться
