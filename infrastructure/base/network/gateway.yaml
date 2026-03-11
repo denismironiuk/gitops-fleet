@@ -4,10 +4,8 @@ metadata:
   name: external-gateway
   namespace: nginx-gateway
   annotations:
-    # Волна -12: создаем входную точку
     argocd.argoproj.io/sync-wave: "-12"
 spec:
-  # Имя класса из Шага 3 (nginx-gateway-fabric)
   gatewayClassName: nginx
   listeners:
   - name: http
@@ -22,7 +20,9 @@ spec:
     tls:
       mode: Terminate
       certificateRefs:
-      - name: jenkinsdevops-tls # Имя секрета, который создаст cert-manager
+      - name: jenkinsdevops-tls
+        kind: Secret    # Добавлено для Sync
+        group: ""       # Добавлено для Sync
     allowedRoutes:
       namespaces:
         from: All
