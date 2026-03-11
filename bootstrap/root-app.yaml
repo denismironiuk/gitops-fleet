@@ -13,8 +13,7 @@ spec:
     targetRevision: main
     path: bootstrap
     # ВОТ ОНО: Явное указание использовать Kustomize
-    kustomize:
-      version: v4 # Или v5, если хочешь посвежее
+    kustomize: {}
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
