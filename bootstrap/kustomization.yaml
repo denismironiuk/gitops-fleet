@@ -5,4 +5,5 @@ kind: Kustomization
 resources:
   - infra-gateway-api-crds.yaml
   - infra-cert-manager.yaml
+  - infra-nginx-gateway.yaml
   # Все остальные файлы в папке будут игнорироваться
