@@ -45,7 +45,6 @@ spec:
         extraArgs:
           - --txt-owner-id=aks-prod-cluster
           - --domain-filter=jenkinsdevops.org
-          - --log-level=info
   destination:
     server: https://kubernetes.default.svc
     namespace: external-dns
