@@ -14,13 +14,17 @@ spec:
     helm:
       values: |
         provider: azure
-        azure:
-          resourceGroup: rg-migration-prod
-          tenantId: 69982d6a-e385-4e42-bdcd-4159c0dcb907
-          subscriptionId: fcf3f628-5f65-43c3-8a08-8b202b22def0
-          useWorkloadIdentityExtension: true
+        # Указываем источники явно, чтобы убрать лишние service/ingress
+        sources:
+          - gateway-httproute
         
-        # 1. ВСТРАИВАЕМ RBAC ПРЯМО СЮДА
+        azure:
+          useWorkloadIdentityExtension: true
+          # Эти поля важны, чтобы он не искал конфиг-файл
+          resourceGroup: rg-migration-prod
+          subscriptionId: fcf3f628-5f65-43c3-8a08-8b202b22def0
+          tenantId: 69982d6a-e385-4e42-bdcd-4159c0dcb907
+
         rbac:
           create: true
           additionalPermissions:
@@ -37,18 +41,11 @@ spec:
           azure.workload.identity/use: "true"
 
         extraArgs:
-          - --source=gateway-httproute
           - --txt-owner-id=aks-prod-cluster
           - --domain-filter=jenkinsdevops.org
-          # 2. ДОБАВЛЯЕМ ЭТОТ ФЛАГ ДЛЯ WORKLOAD IDENTITY
-          - --azure-skip-msi 
-
-        # 3. ГАРАНТИРУЕМ НАЛИЧИЕ НАСТРОЕК ВНУТРИ ПОДА
-        env:
-          - name: AZURE_SUBSCRIPTION_ID
-            value: "fcf3f628-5f65-43c3-8a08-8b202b22def0"
-          - name: AZURE_RESOURCE_GROUP
-            value: "rg-migration-prod"
+          - --azure-skip-msi
+          # ПРИНУДИТЕЛЬНО ПЕРЕВОДИМ НА v1
+          - --gateway-api-version=v1 
   destination:
     server: https://kubernetes.default.svc
     namespace: external-dns
