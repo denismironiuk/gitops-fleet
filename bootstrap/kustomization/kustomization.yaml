@@ -1,0 +1,7 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# ArgoCD увидит и создаст ТОЛЬКО эти приложения
+resources:
+  - infra-gateway-api-crds.yaml
+  # Все остальные файлы в папке будут игнорироваться

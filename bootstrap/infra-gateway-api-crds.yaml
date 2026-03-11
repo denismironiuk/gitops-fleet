@@ -4,19 +4,22 @@ metadata:
   name: infra-gateway-api-crds
   namespace: argocd
   annotations:
-    argocd.argoproj.io/sync-wave: "-30" # Самый первый уровень
+    # Самая ранняя волна: CRD должны стоять первыми в кластере
+    argocd.argoproj.io/sync-wave: "-30"
 spec:
   project: default
   source:
-    repoURL: 'https://github.com/kubernetes-sigs/gateway-api.git'
-    targetRevision: v1.5.0
-    path: config/crd/standard
+    repoURL: 'https://github.com/denismironiuk/gitops-fleet.git' # Твой репо
+    targetRevision: main
+    path: infrastructure/base/gateway-api/crds # Путь к скачанному файлу
   destination:
     server: 'https://kubernetes.default.svc'
-    namespace: default # CRD всегда глобальны
+    namespace: default # Для CRD неймспейс не важен, они Cluster-scoped
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
-      - ServerSideApply=true # Маст-хэв для тяжелых манифестов Gateway API
+      - CreateNamespace=true
+      # КЛЮЧЕВОЙ МОМЕНТ: аналог --server-side
+      - ServerSideApply=true

@@ -3,12 +3,18 @@ kind: Application
 metadata:
   name: root-app
   namespace: argocd
+  # ДОБАВЛЯЕМ: Теперь при удалении этого файла, снесется всё остальное само
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
     repoURL: 'https://github.com/denismironiuk/gitops-fleet.git'
     targetRevision: main
-    path: bootstrap # Смотрит в ту же папку, где лежит сам
+    path: bootstrap
+    # ВОТ ОНО: Явное указание использовать Kustomize
+    kustomize:
+      version: v4 # Или v5, если хочешь посвежее
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
@@ -16,8 +22,10 @@ spec:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+      - CreateNamespace=true # Лишним не будет
     retry:
-      limit: 5 # Senior touch: если гит лагает, он попробует еще раз
+      limit: 5
       backoff:
         duration: 5s
         factor: 2
