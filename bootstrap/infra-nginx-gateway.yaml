@@ -4,7 +4,7 @@ metadata:
   name: infra-nginx
   namespace: argocd
   annotations:
-    argocd.argoproj.io/sync-wave: "-20"
+    argocd.argoproj.io/sync-wave: "-18"
 spec:
   project: default
   source:
@@ -13,12 +13,16 @@ spec:
     path: charts/nginx-gateway-fabric
     helm:
       releaseName: ngf
-      # ВАЖНО: Следи за отступами внутри values
       values: |
+        # Правильное расположение настройки сервиса
+        service:
+          type: LoadBalancer
+        # Обязательный лейбл для работы Workload Identity
+        podLabels:
+          azure.workload.identity/use: "true"
         serviceAccount:
           annotations:
             azure.workload.identity/client-id: "f4fc578b-e718-46b7-9022-2240d12a2c91"
-          type: LoadBalancer
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: nginx-gateway
@@ -28,3 +32,5 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+      # Добавляем ServerSideApply для тяжелых манифестов NGF
+      - ServerSideApply=true
