@@ -6,4 +6,5 @@ resources:
   - infra-gateway-api-crds.yaml
   - infra-cert-manager.yaml
   - infra-nginx-gateway.yaml
+  - infra-cluster-issuer.yaml
   # Все остальные файлы в папке будут игнорироваться
