@@ -1,0 +1,14 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: jenkinsdevops-tls
+  namespace: nginx-gateway
+spec:
+  # То самое имя секрета, которое ждет твой Gateway
+  secretName: jenkinsdevops-tls 
+  issuerRef:
+    name: letsencrypt-prod-dns
+    kind: ClusterIssuer
+  dnsNames:
+    - "*.jenkinsdevops.org"
+    - "jenkinsdevops.org" # Хорошая практика добавлять и корневой домен тоже
