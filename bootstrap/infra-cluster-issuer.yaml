@@ -19,4 +19,4 @@ spec:
           environment: AzurePublicCloud
           # Используем Workload Identity (как и в контроллере)
           managedIdentity:
-            clientID: f4fc578b-e718-46b7-9022-2240d12a2c91
+            clientID: "8c0e4018-86a6-42b6-83c4-7bf808b4d41b"
