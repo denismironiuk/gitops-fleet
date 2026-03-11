@@ -17,11 +17,14 @@ spec:
         sources:
           - gateway-httproute
         
-        azure:
-          # ГЛАВНЫЙ ФИКС: подключаем наш секрет как файл
-          secretName: external-dns-azure-config
-          resourceGroup: rg-migration-prod # Оставляем для чарта
-
+        # Настройка прав и Workload Identity
+        serviceAccount:
+          name: external-dns-sa
+          annotations:
+            azure.workload.identity/client-id: "dbafb21d-f2e1-495c-bc64-9991cb12ebd1"
+        podLabels:
+          azure.workload.identity/use: "true"
+        
         rbac:
           create: true
           additionalPermissions:
@@ -29,18 +32,20 @@ spec:
               resources: ["httproutes", "gateways", "gatewayclasses"]
               verbs: ["get", "watch", "list"]
 
-        serviceAccount:
-          name: external-dns-sa
-          annotations:
-            azure.workload.identity/client-id: "dbafb21d-f2e1-495c-bc64-9991cb12ebd1"
-        
-        podLabels:
-          azure.workload.identity/use: "true"
+        # ПРИНУДИТЕЛЬНОЕ МОНТИРОВАНИЕ ФАЙЛА
+        extraVolumes:
+          - name: azure-config
+            secret:
+              secretName: external-dns-azure-config
+        extraVolumeMounts:
+          - name: azure-config
+            mountPath: /etc/kubernetes
+            readOnly: true
 
         extraArgs:
           - --txt-owner-id=aks-prod-cluster
           - --domain-filter=jenkinsdevops.org
-          # Мы больше не передаем tenant-id флагом, он внутри файла
+          - --log-level=info
   destination:
     server: https://kubernetes.default.svc
     namespace: external-dns
