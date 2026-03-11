@@ -4,7 +4,7 @@ metadata:
   name: infra-external-dns
   namespace: argocd
   annotations:
-    argocd.argoproj.io/sync-wave: "-15" # Ставим после контроллера
+    argocd.argoproj.io/sync-wave: "-15"
 spec:
   project: default
   source:
@@ -14,13 +14,18 @@ spec:
     helm:
       values: |
         provider: azure
-        # Добавляем лейбл для инъекции токена Azure (как в cert-manager)
+        # --- ЯВНО УКАЗЫВАЕМ НАСТРОЙКИ AZURE ---
+        azure:
+          useWorkloadIdentityExtension: true
+          resourceGroup: "rg-migration-prod"
+          subscriptionId: "fcf3f628-5f65-43c3-8a08-8b202b22def0"
+          tenantId: "69982d6a-e385-4e42-bdcd-4159c0dcb907"
+        # --------------------------------------
         podLabels:
           azure.workload.identity/use: "true"
         serviceAccount:
           annotations:
             azure.workload.identity/client-id: "f4fc578b-e718-46b7-9022-2240d12a2c91"
-        # ПРАВИЛЬНЫЙ СПОСОБ: используем встроенный массив sources
         sources:
           - service
           - ingress
