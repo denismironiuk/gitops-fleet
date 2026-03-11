@@ -1,0 +1,16 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: jenkinsdevops-tls
+  namespace: nginx-gateway
+  annotations:
+    argocd.argoproj.io/sync-wave: "-12"
+spec:
+  # Имя секрета, где будет лежать готовый сертификат
+  secretName: jenkinsdevops-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+  - "jenkinsdevops.org"
+  - "*.jenkinsdevops.org"

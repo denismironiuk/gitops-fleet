@@ -4,16 +4,17 @@ metadata:
   name: infra-network-config
   namespace: argocd
   annotations:
+    # Волна -12: создается после всех контроллеров
     argocd.argoproj.io/sync-wave: "-12"
 spec:
   project: default
   source:
     repoURL: 'https://github.com/denismironiuk/gitops-fleet.git'
     targetRevision: main
-    path: infrastructure/overlays/prod-cluster
+    path: infrastructure/base/network # Путь к папке, где лежат Gateway и Certificate
   destination:
     server: 'https://kubernetes.default.svc'
-    namespace: nginx-gateway
+    namespace: nginx-gateway # Важно: Gateway и Certificate должны быть там, где контроллер
   syncPolicy:
     automated:
       prune: true

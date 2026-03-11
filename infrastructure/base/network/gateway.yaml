@@ -1,0 +1,28 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: external-gateway
+  namespace: nginx-gateway
+  annotations:
+    # Волна -12: создаем входную точку
+    argocd.argoproj.io/sync-wave: "-12"
+spec:
+  # Имя класса из Шага 3 (nginx-gateway-fabric)
+  gatewayClassName: nginx
+  listeners:
+  - name: http
+    port: 80
+    protocol: HTTP
+    allowedRoutes:
+      namespaces:
+        from: All
+  - name: https
+    port: 443
+    protocol: HTTPS
+    tls:
+      mode: Terminate
+      certificateRefs:
+      - name: jenkinsdevops-tls # Имя секрета, который создаст cert-manager
+    allowedRoutes:
+      namespaces:
+        from: All
