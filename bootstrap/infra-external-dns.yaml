@@ -23,17 +23,17 @@ spec:
           - service
           - ingress
           - gateway-httproute
-        # --- ПЕРЕДАЕМ НАСТРОЙКИ ЧЕРЕЗ ПЕРЕМЕННЫЕ ОКРУЖЕНИЯ ---
-        env:
-          - name: AZURE_TENANT_ID
-            value: "69982d6a-e385-4e42-bdcd-4159c0dcb907"
-          - name: AZURE_SUBSCRIPTION_ID
-            value: "fcf3f628-5f65-43c3-8a08-8b202b22def0"
-          - name: AZURE_RESOURCE_GROUP
-            value: "rg-migration-prod"
-        # ------------------------------------------------------
-        extraArgs:
-          - "--azure-config-file=" # Отключаем поиск файла azure.json
+        # --- ЖЕЛЕЗНОЕ РЕШЕНИЕ: МОНТИРУЕМ ФАЙЛ ИЗ CONFIGMAP ---
+        extraVolumes:
+          - name: azure-config
+            configMap:
+              name: external-dns-azure-config
+        extraVolumeMounts:
+          - name: azure-config
+            mountPath: /etc/kubernetes/azure.json
+            subPath: azure.json
+            readOnly: true
+        # -----------------------------------------------------
   destination:
     server: https://kubernetes.default.svc
     namespace: external-dns

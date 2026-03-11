@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: external-dns-azure-config
+  namespace: external-dns
+data:
+  azure.json: |
+    {
+      "tenantId": "69982d6a-e385-4e42-bdcd-4159c0dcb907",
+      "subscriptionId": "fcf3f628-5f65-43c3-8a08-8b202b22def0",
+      "resourceGroup": "rg-migration-prod",
+      "useWorkloadIdentityExtension": true
+    }
