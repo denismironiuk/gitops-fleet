@@ -1,0 +1,19 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod-dns
+spec:
+  acme:
+    email: твой.email@example.com  # <--- Впиши свой email
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: letsencrypt-prod-dns-account-key
+    solvers:
+    - dns01:
+        azureDNS:
+          subscriptionID: fcf3f628-5f65-43c3-8a08-8b202b22def0
+          resourceGroupName: rg-migration-prod
+          hostedZoneName: jenkinsdevops.org
+          environment: AzurePublicCloud
+          managedIdentity:
+            clientID: 8c0e4018-86a6-42b6-83c4-7bf808b4d41b

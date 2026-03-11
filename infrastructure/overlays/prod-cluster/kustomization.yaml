@@ -5,3 +5,4 @@ resources:
   - external-gateway.yaml
   - argocd-route.yaml
   - cert.yaml
+  - clusterissuer.yaml
