@@ -42,8 +42,7 @@ spec:
         extraArgs:
           - --txt-owner-id=aks-prod-cluster
           - --domain-filter=jenkinsdevops.org
-          # Оставляем этот флаг, чтобы он не искал v1beta1
-          - --gateway-api-version=v1 
+          
   destination:
     server: https://kubernetes.default.svc
     namespace: external-dns
