@@ -9,4 +9,5 @@ resources:
   - infra-cluster-issuer.yaml
   - infra-network-config.yaml
   - infra-external-dns.yaml
+  - prod-frontend-api.yaml
   # Все остальные файлы в папке будут игнорироваться
