@@ -4,4 +4,5 @@ kind: Kustomization
 # ArgoCD увидит и создаст ТОЛЬКО эти приложения
 resources:
   - infra-gateway-api-crds.yaml
+  - infra-cert-manager.yaml
   # Все остальные файлы в папке будут игнорироваться

@@ -3,7 +3,9 @@ kind: Application
 metadata:
   name: infra-cert-manager
   namespace: argocd
-  annotations: {argocd.argoproj.io/sync-wave: "-20"}
+  annotations:
+    # Волна -20: запускается сразу после CRD Gateway API
+    argocd.argoproj.io/sync-wave: "-20"
 spec:
   project: default
   source:
@@ -13,23 +15,27 @@ spec:
     helm:
       values: |
         installCRDs: true
-        # --- ДОБАВЛЕНО ДЛЯ AZURE WORKLOAD IDENTITY ---
         podLabels:
           azure.workload.identity/use: "true"
         serviceAccount:
           annotations:
             azure.workload.identity/client-id: "8c0e4018-86a6-42b6-83c4-7bf808b4d41b"
-        # ---------------------------------------------
-  destination: {server: 'https://kubernetes.default.svc', namespace: cert-manager}
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: cert-manager
   ignoreDifferences:
     - group: admissionregistration.k8s.io
       kind: ValidatingWebhookConfiguration
-      name: infra-cert-manager-webhook
+      name: cert-manager-webhook
       jqPathExpressions: ['.webhooks[].namespaceSelector.matchExpressions']
     - group: admissionregistration.k8s.io
       kind: MutatingWebhookConfiguration
-      name: infra-cert-manager-webhook
+      name: cert-manager-webhook
       jqPathExpressions: ['.webhooks[].namespaceSelector.matchExpressions']
   syncPolicy:
-    automated: {prune: true, selfHeal: true}
-    syncOptions: [CreateNamespace=true, ServerSideApply=true]
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
