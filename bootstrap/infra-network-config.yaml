@@ -3,14 +3,21 @@ kind: Application
 metadata:
   name: infra-network-config
   namespace: argocd
-  annotations: {argocd.argoproj.io/sync-wave: "-12"}
+  annotations:
+    argocd.argoproj.io/sync-wave: "-12"
 spec:
   project: default
   source:
     repoURL: 'https://github.com/denismironiuk/gitops-fleet.git'
     targetRevision: main
     path: infrastructure/overlays/prod-cluster
-  destination: {server: 'https://kubernetes.default.svc', namespace: nginx-gateway}
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: nginx-gateway
   syncPolicy:
-    automated: {prune: true, selfHeal: true}
-    syncOptions: [CreateNamespace=true]
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true # Превентивная защита
