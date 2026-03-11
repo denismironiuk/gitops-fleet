@@ -19,17 +19,36 @@ spec:
           tenantId: 69982d6a-e385-4e42-bdcd-4159c0dcb907
           subscriptionId: fcf3f628-5f65-43c3-8a08-8b202b22def0
           useWorkloadIdentityExtension: true
+        
+        # 1. ВСТРАИВАЕМ RBAC ПРЯМО СЮДА
+        rbac:
+          create: true
+          additionalPermissions:
+            - apiGroups: ["gateway.networking.k8s.io"]
+              resources: ["httproutes", "gateways"]
+              verbs: ["get", "watch", "list"]
+
         serviceAccount:
           name: external-dns-sa
           annotations:
-            # Наш проверенный Managed Identity
             azure.workload.identity/client-id: "dbafb21d-f2e1-495c-bc64-9991cb12ebd1"
+        
         podLabels:
           azure.workload.identity/use: "true"
+
         extraArgs:
           - --source=gateway-httproute
           - --txt-owner-id=aks-prod-cluster
-          - --domain-filter=jenkinsdevops.org # Чтобы он не лез в чужие зоны
+          - --domain-filter=jenkinsdevops.org
+          # 2. ДОБАВЛЯЕМ ЭТОТ ФЛАГ ДЛЯ WORKLOAD IDENTITY
+          - --azure-skip-msi 
+
+        # 3. ГАРАНТИРУЕМ НАЛИЧИЕ НАСТРОЕК ВНУТРИ ПОДА
+        env:
+          - name: AZURE_SUBSCRIPTION_ID
+            value: "fcf3f628-5f65-43c3-8a08-8b202b22def0"
+          - name: AZURE_RESOURCE_GROUP
+            value: "rg-migration-prod"
   destination:
     server: https://kubernetes.default.svc
     namespace: external-dns
