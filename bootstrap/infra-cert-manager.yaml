@@ -4,7 +4,6 @@ metadata:
   name: infra-cert-manager
   namespace: argocd
   annotations:
-    # Волна -20: запускается после установки CRD Gateway API
     argocd.argoproj.io/sync-wave: "-20"
 spec:
   project: default
@@ -15,18 +14,18 @@ spec:
     helm:
       values: |
         installCRDs: true
-        # Настройка для Workload Identity
         podLabels:
           azure.workload.identity/use: "true"
         serviceAccount:
+          # Важно: имя должно быть infra-cert-manager, как мы настраивали в FIC
+          name: infra-cert-manager
           annotations:
-            # Твой ID из логов challenge
-            azure.workload.identity/client-id: "8c0e4018-86a6-42b6-83c4-7bf808b4d41b"
+            # Твой НОВЫЙ ID, который мы создали минуту назад
+            azure.workload.identity/client-id: "dbafb21d-f2e1-495c-bc64-9991cb12ebd1"
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: cert-manager
   ignoreDifferences:
-    # Исправление OutOfSync для вебхука (как на твоём скриншоте)
     - group: admissionregistration.k8s.io
       kind: ValidatingWebhookConfiguration
       name: infra-cert-manager-webhook

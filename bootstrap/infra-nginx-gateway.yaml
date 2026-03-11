@@ -14,15 +14,17 @@ spec:
     helm:
       releaseName: ngf
       values: |
-        # Правильное расположение настройки сервиса
         service:
           type: LoadBalancer
-        # Обязательный лейбл для работы Workload Identity
         podLabels:
           azure.workload.identity/use: "true"
         serviceAccount:
+          # Явно задаем имя, чтобы Azure знал, кому доверять
+          name: nginx-gateway-sa 
           annotations:
-            azure.workload.identity/client-id: "f4fc578b-e718-46b7-9022-2240d12a2c91"
+            # Рекомендую использовать тот же ID, что и для cert-manager (dbafb21d...)
+            # Либо f4fc578b... если у него есть права на Network Contributor
+            azure.workload.identity/client-id: "dbafb21d-f2e1-495c-bc64-9991cb12ebd1"
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: nginx-gateway
@@ -32,5 +34,4 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
-      # Добавляем ServerSideApply для тяжелых манифестов NGF
       - ServerSideApply=true

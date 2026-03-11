@@ -3,7 +3,8 @@ kind: ClusterIssuer
 metadata:
   name: letsencrypt-prod
   annotations:
-    argocd.argoproj.io/sync-wave: "-15" # Волна после контроллеров
+    # Волна -15: применяется после установки контроллера
+    argocd.argoproj.io/sync-wave: "-15"
 spec:
   acme:
     server: https://acme-v02.api.letsencrypt.org/directory
@@ -17,6 +18,6 @@ spec:
           resourceGroupName: rg-migration-prod
           hostedZoneName: jenkinsdevops.org
           environment: AzurePublicCloud
-          # Используем Workload Identity (как и в контроллере)
           managedIdentity:
-            clientID: "8c0e4018-86a6-42b6-83c4-7bf808b4d41b"
+            # Твой НОВЫЙ Client ID, который мы создали (dbafb21d...)
+            clientID: "dbafb21d-f2e1-495c-bc64-9991cb12ebd1"
