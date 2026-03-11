@@ -14,13 +14,12 @@ spec:
     helm:
       values: |
         provider: azure
-        # Указываем источники явно, чтобы убрать лишние service/ingress
         sources:
           - gateway-httproute
         
         azure:
+          # Этого поля в Helm-чарте достаточно для включения логики Workload Identity
           useWorkloadIdentityExtension: true
-          # Эти поля важны, чтобы он не искал конфиг-файл
           resourceGroup: rg-migration-prod
           subscriptionId: fcf3f628-5f65-43c3-8a08-8b202b22def0
           tenantId: 69982d6a-e385-4e42-bdcd-4159c0dcb907
@@ -29,7 +28,7 @@ spec:
           create: true
           additionalPermissions:
             - apiGroups: ["gateway.networking.k8s.io"]
-              resources: ["httproutes", "gateways"]
+              resources: ["httproutes", "gateways", "gatewayclasses"]
               verbs: ["get", "watch", "list"]
 
         serviceAccount:
@@ -43,8 +42,7 @@ spec:
         extraArgs:
           - --txt-owner-id=aks-prod-cluster
           - --domain-filter=jenkinsdevops.org
-          - --azure-skip-msi
-          # ПРИНУДИТЕЛЬНО ПЕРЕВОДИМ НА v1
+          # Оставляем этот флаг, чтобы он не искал v1beta1
           - --gateway-api-version=v1 
   destination:
     server: https://kubernetes.default.svc
